@@ -25,17 +25,17 @@ default allow = false
 # Allow admins to edit, delete, and add
 allow {
     user_is_admin
-    input.action == "edit"   # Admin can edit
+    input.action == "canEdit"   # Admin can edit
 }
 
 allow {
     user_is_admin
-    input.action == "delete" # Admin can delete
+    input.action == "canDelete" # Admin can delete
 }
 
 allow {
     user_is_admin
-    input.action == "add"    # Admin can add
+    input.action == "canAdd"    # Admin can add
 }
 
 # Function to check if the user is an admin
