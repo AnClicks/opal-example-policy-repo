@@ -19,39 +19,35 @@
 
 package app.rbac
 
-# Default deny all requests
 default allow = false
 
-# Allow admins to edit, delete, and add
+# Define roles and their permissions
+role_permissions = {
+    "admin": {
+        "canAdd": true,
+        "canEdit": true,
+        "canDelete": true
+    },
+    "viewer": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+    }
+}
+
+# Input is expected to contain role and action
+# Example input: {"input": {"role": "admin", "action": "canAdd"}}
 allow {
-    user_is_admin
-    input.action == "canEdit"   # Admin can edit
+    input.role == "admin"
+    action_allowed[input.role][input.action]
 }
 
 allow {
-    user_is_admin
-    input.action == "canDelete" # Admin can delete
+    input.role == "viewer"
+    action_allowed[input.role][input.action]
 }
 
-allow {
-    user_is_admin
-    input.action == "canAdd"    # Admin can add
-}
-
-# Function to check if the user is an admin
-user_is_admin {
-    some i
-    data.users[input.user].roles[i] == "admin"
-}
-
-# Viewers cannot perform any actions
-allow {
-    user_is_viewer
-    false # Explicitly deny viewers from performing any action
-}
-
-# Function to check if the user is a viewer
-user_is_viewer {
-    some i
-    data.users[input.user].roles[i] == "viewer"
+# Helper rule to map roles to their permissions
+action_allowed[role][action] {
+    role_permissions[role][action]
 }
